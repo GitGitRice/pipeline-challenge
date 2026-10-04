@@ -15,6 +15,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.10
+      - name: Pip-Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-cache
       - name: Tests ausführen
         run: python -m pytest -v
       - name: Dependencies installieren
@@ -45,11 +50,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Pip-Cache
-        uses: actions/cache@v4
+      - name: Paket herunterladen
+        uses: actions/download-artifact@v4
         with:
-          path: ~/.cache/pip
-          key: pip-cache
+          name: app-paket
+          path: build/
       - name: Release erstellen
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
