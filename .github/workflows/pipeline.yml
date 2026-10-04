@@ -54,10 +54,13 @@ jobs:
         env:
           DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
         run: |
-          echo "Token-Länge: ${#DEPLOY_TOKEN}"
+          if [ ${#DEPLOY_TOKEN} -eq 0 ]; then echo "::error::DEPLOY_TOKEN is empty"; exit 1; fi
 
   release:
-    needs: [build]
+    needs: [build, deploy]
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
     runs-on: ubuntu-latest
     permissions:
       contents: write
