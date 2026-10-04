@@ -45,10 +45,16 @@ jobs:
 
   deploy:
     needs: [build]
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
     runs-on: ubuntu-latest
     steps:
-      - name: Deployment starten
-        run: echo "Deploy nach ${{ secrets.DEPLOY_TOKEN }}"
+      - name: Zugangsdaten prüfen
+        env:
+          DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+        run: |
+          echo "Token-Länge: ${#DEPLOY_TOKEN}"
 
   release:
     needs: [build]
