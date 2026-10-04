@@ -26,8 +26,13 @@ jobs:
         run: python -m pip install -r requirement.txt
 
   build:
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
       - name: Paket bauen
         run: |
           mkdir -p build
@@ -39,13 +44,14 @@ jobs:
           path: build/
 
   deploy:
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - name: Deployment starten
         run: echo "Deploy nach ${{ secrets.DEPLOY_TOKEN }}"
 
   release:
-    needs: build
+    needs: [deploy]
     runs-on: ubuntu-latest
     permissions:
       contents: write
